@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'scan_screen.dart';
 
 class CameraScreen extends StatelessWidget {
   const CameraScreen({super.key});
@@ -188,7 +189,7 @@ class CameraScreen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // 7. Action Buttons
-                  Padding(
+                  /*Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 35),
                     child: ElevatedButton.icon(
                       onPressed: () {},
@@ -203,6 +204,35 @@ class CameraScreen extends StatelessWidget {
                         minimumSize: const Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ),*/
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 35),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // මෙන්න මෙතන තමයි navigation එක වෙන්නේ
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ScanScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.camera_alt, color: Colors.white),
+                      label: const Text(
+                        "Scan Now",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1B4F72),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ),
