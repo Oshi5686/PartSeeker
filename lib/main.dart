@@ -22,7 +22,7 @@ class PartSeekerApp extends StatelessWidget {
   }
 }*/
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'splash_screen.dart'; // Splash screen එක import කරන්න
 
 void main() {
@@ -38,8 +38,36 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Auto Parts Connect',
       theme: ThemeData(primarySwatch: Colors.blue),
-      // මුලින්ම load වෙන්නේ Splash Screen එක
+    
       home: const SplashScreen(), 
+    );
+  }
+}*/
+
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'splash_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Auto Parts Connect',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Poppins',
+      ),
+      home: const SplashScreen(),
     );
   }
 }

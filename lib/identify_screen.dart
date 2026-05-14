@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import '../auth/login_page.dart'; // ⬅️ Login Page එකට අදාළ path එක මෙතනට දාන්න
 
 class IdentifyPage extends StatelessWidget {
   final Uint8List image;
@@ -21,7 +22,7 @@ class IdentifyPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Identified Part",
-            style: TextStyle(color: Colors.black)),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -35,13 +36,16 @@ class IdentifyPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // 1. Image Container (Light Grey background added)
               Container(
                 width: double.infinity,
                 height: 250,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black12, blurRadius: 10)
+                  ],
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
@@ -50,6 +54,7 @@ class IdentifyPage extends StatelessWidget {
               ),
               const SizedBox(height: 25),
 
+              // 2. Part Name & Confidence Level
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -75,6 +80,7 @@ class IdentifyPage extends StatelessWidget {
               ),
               const SizedBox(height: 15),
 
+              // 3. Description Section
               Text(
                 description,
                 style: TextStyle(
@@ -82,9 +88,15 @@ class IdentifyPage extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
-              // 4. "Find Sellers" Button
+              // 4. "Find Sellers" Button (Navigates to Login Page)
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // 🚀 මෙතනින් තමයි Login Page එකට යන්නේ
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1B4F72),
                   minimumSize: const Size(double.infinity, 55),
@@ -92,7 +104,10 @@ class IdentifyPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15)),
                 ),
                 child: const Text("Find Sellers",
-                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold)),
               ),
 
               const SizedBox(height: 15),
@@ -107,7 +122,10 @@ class IdentifyPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15)),
                 ),
                 child: const Text("Scan Again",
-                    style: TextStyle(fontSize: 18, color: Color(0xFF1B4F72))),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF1B4F72),
+                        fontWeight: FontWeight.bold)),
               ),
             ],
           ),

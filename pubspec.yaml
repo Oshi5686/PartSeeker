@@ -35,6 +35,9 @@ dependencies:
   flutter_plugin_android_lifecycle: ^2.0.34
   image_picker: ^1.2.2
   tflite_v2: ^1.0.0
+  firebase_core: ^4.8.0
+  firebase_auth: ^6.5.0
+  google_sign_in: ^6.2.1
 
 
   
