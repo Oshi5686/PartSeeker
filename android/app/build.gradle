@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.part_seeker"
+    namespace "com.example.part_seeker"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

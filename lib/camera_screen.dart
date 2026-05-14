@@ -1,40 +1,77 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 import 'scan_screen.dart';
 
-class CameraScreen extends StatelessWidget {
+class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
-  void _showPicker(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Wrap(
-              children: <Widget>[
-                ListTile(
-                    leading: const Icon(Icons.photo_camera),
-                    title: const Text('Take Photo'),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    }),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Choose from Gallery'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.cancel),
-                  title: const Text('Cancel'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
-        });
+  @override
+  State<CameraScreen> createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends State<CameraScreen> {
+  CameraController? _controller;
+  Future<void>? _initializeControllerFuture;
+  final ImagePicker _picker = ImagePicker();
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    final cameras = await availableCameras();
+    if (cameras.isEmpty) return;
+
+    _controller = CameraController(
+      cameras.first,
+      ResolutionPreset.medium,
+    );
+
+    _initializeControllerFuture = _controller!.initialize();
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickFromGallery() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final Uint8List bytes = await image.readAsBytes();
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ScanScreen(imageBytes: bytes),
+        ),
+      );
+    }
+  }
+
+  Future<void> _takePicture() async {
+    try {
+      if (_controller == null || !_controller!.value.isInitialized) return;
+      final image = await _controller!.takePicture();
+      final bytes = await image.readAsBytes();
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ScanScreen(imageBytes: bytes),
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error taking picture: $e");
+    }
   }
 
   @override
@@ -43,20 +80,18 @@ class CameraScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 1. Top Background Ellipse -
+          // 🔵 Background Blue Shape
           Positioned(
-            top: -120,
+            top: -150,
             left: -40,
             right: -40,
             child: Container(
-              height: 350,
+              height: 300,
               decoration: BoxDecoration(
-                color: const Color(0xFFD6EAF8), // Figma light blue color
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.elliptical(
-                      MediaQuery.of(context).size.width + 100, 180),
-                  bottomRight: Radius.elliptical(
-                      MediaQuery.of(context).size.width + 100, 180),
+                color: const Color(0xFFD6EAF8),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(200),
+                  bottomRight: Radius.circular(200),
                 ),
               ),
             ),
@@ -65,210 +100,82 @@ class CameraScreen extends StatelessWidget {
           SafeArea(
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
 
-                  // 2. Logo & Name
-                  Center(
+                  // 🏗️ Logo සහ App Name
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25),
+                    child: _buildHeader(),
+                  ),
+
+                  const SizedBox(height: 80), // Blue shape
+
+                  // 📝 Title & Description
+                  const Center(
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/logo.png',
-                              height: 70, //
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(width: 8), // Logo
-                            const Text(
-                              "PartSeeker",
-                              style: TextStyle(
-                                fontSize: 32, // Figma
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF1B4F72), // Dark Blue
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        // 3. Subtitle - Identify Parts. Find Sellers.
-                        const Text(
-                          "Identify Parts. Find Sellers.",
+                        Text(
+                          "Identify Your Vehicle Part\nInstantly",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color(0xFFE27312), // Orange color from Figma
-                            fontWeight: FontWeight.w800,
-                            fontSize: 16,
-                            letterSpacing: 0.2,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1B4F72),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 50, vertical: 8),
+                          child: Text(
+                            "Scan or upload a photo and PartSeeker AI will recognise the spare part.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 15),
 
-                  // 4. Main Title
-                  const Text(
-                    "Identify Your Vehicle Part\nInstantly",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1B4F72),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 8),
-                    child: Text(
-                      "Scan or upload a photo and PartSeeker AI will recognise the spare part.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ),
-
-                  // 5. Search Bar
+                  // 🔍 Search Bar
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 35),
                     child: TextField(
+                      controller: _searchController,
                       decoration: InputDecoration(
                         hintText: "Search spare parts",
                         prefixIcon:
-                            const Icon(Icons.search, color: Colors.grey),
+                            const Icon(Icons.search, color: Color(0xFF1B4F72)),
                         filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFD5D8DC)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide:
-                              const BorderSide(color: Color(0xFF1B4F72)),
+                        fillColor: const Color(0xFFF2F4F4),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
                         ),
                         contentPadding:
-                            const EdgeInsets.symmetric(vertical: 10),
-                      ),
-                    ),
-                  ),
-
-                  // 6. Camera Preview Box
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 10),
-                    height: 200,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEBF5FB),
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                          color: const Color(0xFFAED6F1), width: 1.5),
-                    ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.camera_alt_outlined,
-                              color: Color(0xFF2E86C1), size: 50),
-                          SizedBox(height: 10),
-                          Text(
-                            "Camera Preview",
-                            style: TextStyle(
-                                color: Color(0xFF2E86C1),
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                            const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  // 7. Action Buttons
-                  /*Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 35),
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.camera_alt, color: Colors.white),
-                      label: const Text("Scan Now",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1B4F72),
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                  ),*/
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 35),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // මෙන්න මෙතන තමයි navigation එක වෙන්නේ
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ScanScreen()),
-                        );
-                      },
-                      icon: const Icon(Icons.camera_alt, color: Colors.white),
-                      label: const Text(
-                        "Scan Now",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1B4F72),
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 35),
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showPicker(context),
-                      icon: const Icon(Icons.file_upload_outlined,
-                          color: Color(0xFF1B4F72)),
-                      label: const Text("Upload from Gallery",
-                          style: TextStyle(
-                              color: Color(0xFF1B4F72),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold)),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        side: const BorderSide(
-                            color: Color(0xFF1B4F72), width: 1.5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                  ),
+                  // 📸 Camera Preview Box
+                  _buildCameraBox(),
+
+                  const SizedBox(height: 25),
+
+                  // 🔘 Buttons
+                  _buildActionButtons(),
 
                   const SizedBox(height: 40),
 
-                  // 8. Bottom Navigation Icons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildBottomNav(Icons.person_search, "Manual Search"),
-                      _buildBottomNav(Icons.save_outlined, "Saved Scans"),
-                      _buildBottomNav(Icons.help_outline, "Help"),
-                    ],
-                  ),
+                  // 📱 Bottom Navigation
+                  _buildBottomMenu(),
+
                   const SizedBox(height: 30),
                 ],
               ),
@@ -276,6 +183,133 @@ class CameraScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  // Header Component (Logo + Text)
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Image.asset(
+              'assets/images/logo.png',
+              height: 60,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.settings_suggest,
+                  size: 50,
+                  color: Color(0xFF1B4F72)),
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              "PartSeeker",
+              style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1B4F72)),
+            ),
+          ],
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 5),
+          child: Text(
+            "Identify Parts. Find Sellers.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Color(0xFFE27312),
+                fontWeight: FontWeight.w800,
+                fontSize: 16),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Camera Box Component
+  Widget _buildCameraBox() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 35),
+      height: 220,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEBF5FB),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: const Color(0xFFAED6F1), width: 1.5),
+        boxShadow: [
+          const BoxShadow(
+              color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: FutureBuilder<void>(
+          future: _initializeControllerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                _controller != null) {
+              return CameraPreview(_controller!);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  // Scan & Upload Buttons
+  Widget _buildActionButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 35),
+      child: Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: _takePicture,
+            icon: const Icon(Icons.camera_alt, color: Colors.white),
+            label: const Text("Scan Now",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1B4F72),
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _pickFromGallery,
+            icon: const Icon(Icons.file_upload_outlined,
+                color: Color(0xFF1B4F72)),
+            label: const Text("Upload from Gallery",
+                style: TextStyle(
+                    color: Color(0xFF1B4F72),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+              side: const BorderSide(color: Color(0xFF1B4F72), width: 1.5),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Bottom Menu Items
+  Widget _buildBottomMenu() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildBottomNav(Icons.person_search, "Manual Search"),
+        _buildBottomNav(Icons.save_outlined, "Saved Scans"),
+        _buildBottomNav(Icons.help_outline, "Help"),
+      ],
     );
   }
 
