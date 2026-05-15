@@ -1,16 +1,35 @@
-# part_seeker
+# 🚗 PartSeeker - AI-Powered Vehicle Part Identifier
 
-A new Flutter project.
+**PartSeeker** is an advanced Flutter mobile application designed to identify vehicle spare parts instantly using AI-driven image analysis. This project was developed as part of the final-year academic curriculum at **NSBM Green University**.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🌟 Key Features
+* **AI Part Recognition:** Utilizes a custom TensorFlow Lite model to identify vehicle parts via camera or gallery.
+* **Smart UI/UX:** Clean, modern interface designed for ease of use in garage environments.
+* **Secure Authentication:** Integrated with Firebase for secure user login and registration.
+* **Offline Capability:** Core identification logic works offline to ensure reliability anywhere.
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Technology Stack
+* **Framework:** Flutter & Dart
+* **Backend:** Firebase Authentication & Firestore
+* **Machine Learning:** TensorFlow Lite (Custom Model)
+* **Storage:** Firebase Cloud Storage
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Installation & Setup
+
+1. **Clone the project:**
+   ```bash
+   git clone [https://github.com/Oshi5686/PartSeeker.git](https://github.com/Oshi5686/PartSeeker.git)
+
+   ---
+
+## 🔑 Test Credentials
+To explore the app features without creating a new account, you can use the following test credentials:
+
+* **Email:** `testuser@example.com`
+* **Password:** `test1234`
+
+---
