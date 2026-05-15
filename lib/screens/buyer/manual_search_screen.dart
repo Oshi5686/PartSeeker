@@ -9,9 +9,8 @@ class ManualSearchScreen extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
       await googleSignIn.signOut();
-
       await FirebaseAuth.instance.signOut();
 
       if (context.mounted) {

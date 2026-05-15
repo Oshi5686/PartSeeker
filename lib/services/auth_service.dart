@@ -58,10 +58,16 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ///
-  static final GoogleSignIn _googleSignIn = GoogleSignIn();
+  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email'],
+  );
 
   Future<User?> signInWithGoogle() async {
     try {
+      /*final GoogleSignInAccount? googleUser =
+          await GoogleSignIn.instance.authenticate();
+      if (googleUser == null) return null;*/
+
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null;
 
