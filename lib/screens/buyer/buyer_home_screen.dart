@@ -572,7 +572,7 @@ class BuyerHomeScreen extends StatelessWidget {
   }
 }*/
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart'; // 🎯 URL Launcher එක එකතු කරා
@@ -811,6 +811,307 @@ class BuyerHomeScreen extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             // 💬 WhatsApp Message Button එක වැඩ කරනවා
+            IconButton(
+              icon: const Icon(Icons.message, color: Colors.blue),
+              onPressed: () => _openWhatsApp(phone, displayPartName),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}*/
+
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:part_seeker/screens/buyer/shop_details_screen.dart';
+
+class BuyerHomeScreen extends StatelessWidget {
+  final String scannedPart;
+
+  const BuyerHomeScreen({
+    super.key,
+    required this.scannedPart,
+  });
+
+  Future<void> _makeCall(String phone) async {
+    if (phone.isEmpty) return;
+    final Uri callUrl = Uri.parse("tel:$phone");
+    if (await canLaunchUrl(callUrl)) {
+      await launchUrl(callUrl);
+    }
+  }
+
+  Future<void> _openWhatsApp(String phone, String partName) async {
+    if (phone.isEmpty) return;
+
+    String formattedPhone = phone.trim();
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = '+94' + formattedPhone.substring(1);
+    }
+
+    final String message =
+        "Hello, I am interested in buying the '$partName' from your shop listed on PartSeeker.";
+    final Uri whatsappUrl = Uri.parse(
+        "https://wa.me/${formattedPhone.replaceAll('+', '')}?text=${Uri.encodeComponent(message)}");
+
+    if (await canLaunchUrl(whatsappUrl)) {
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String greetingName = user?.displayName ?? "User";
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Hello, $greetingName",
+                    style: const TextStyle(
+                        color: Color(0xFF1B4F72),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Sellers for $scannedPart",
+                    style: const TextStyle(
+                        color: Colors.blueAccent,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 15),
+                  _buildFilterChips(),
+                  const SizedBox(height: 20),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('parts')
+                        .where('category', isEqualTo: scannedPart.toUpperCase())
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text(
+                              "No registered shops found for '$scannedPart' in Firebase yet.",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 16),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          var partDoc = snapshot.data!.docs[index];
+
+                          String shopId = partDoc['shopId'] ?? '';
+                          String price = partDoc['price']?.toString() ?? '0.00';
+                          String condition = partDoc['status'] ?? 'New';
+                          String partName = partDoc['partName'] ?? scannedPart;
+
+                          String targetCollection = 'shops';
+                          if (shopId.startsWith('seller_')) {
+                            targetCollection = 'sellers';
+                          }
+
+                          return FutureBuilder<DocumentSnapshot>(
+                            future: FirebaseFirestore.instance
+                                .collection(targetCollection)
+                                .doc(shopId)
+                                .get(),
+                            builder: (context, userSnapshot) {
+                              if (userSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                );
+                              }
+
+                              if (!userSnapshot.hasData ||
+                                  !userSnapshot.data!.exists) {
+                                return const SizedBox();
+                              }
+
+                              var userData = userSnapshot.data!;
+                              Map<String, dynamic> dataMap =
+                                  userData.data() as Map<String, dynamic>;
+
+                              String displayName = 'Unknown Seller';
+                              if (dataMap.containsKey('shopName')) {
+                                displayName = dataMap['shopName'];
+                              } else if (dataMap.containsKey('name')) {
+                                displayName = dataMap['name'];
+                              }
+
+                              String sLocation = dataMap.containsKey('location')
+                                  ? dataMap['location']
+                                  : 'No Location';
+                              String sPhone = dataMap.containsKey('phone')
+                                  ? dataMap['phone']
+                                  : '';
+
+                              int sStars = 5;
+                              if (dataMap.containsKey('stars')) {
+                                sStars = dataMap['stars'] is int
+                                    ? dataMap['stars']
+                                    : (dataMap['stars'] as num).toInt();
+                              }
+
+                              return _buildShopItem(
+                                context,
+                                displayPartName: partName,
+                                shopName: displayName,
+                                location: sLocation,
+                                price: 'LKR $price',
+                                stars: sStars,
+                                phone: sPhone,
+                                condition: condition,
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: 220,
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Color(0xFFDDEAF3),
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(150),
+            bottomRight: Radius.circular(150)),
+      ),
+      child: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 20),
+            Icon(Icons.settings, size: 80, color: Colors.blue),
+            Text("PartSeeker",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E3A8A))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChips() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: ["Nearest", "Lower Price", "New", "Used"].map((label) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blueAccent),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(label, style: const TextStyle(fontSize: 12)),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildShopItem(
+    BuildContext context, {
+    required String displayPartName,
+    required String shopName,
+    required String location,
+    required String price,
+    required int stars,
+    required String phone,
+    required String condition,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 15),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: ListTile(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ShopDetailsScreen(
+                partData: {
+                  "partName": displayPartName,
+                  "price": price,
+                  "condition": condition,
+                },
+                shopData: {
+                  "shopName": shopName,
+                  "location": location,
+                  "phone": phone,
+                },
+              ),
+            ),
+          );
+        },
+        leading: const CircleAvatar(
+            backgroundColor: Colors.grey,
+            child: Icon(Icons.person, color: Colors.white)),
+        title:
+            Text(shopName, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(location, style: const TextStyle(fontSize: 12)),
+            Row(
+                children: List.generate(
+                    5,
+                    (index) => Icon(Icons.star,
+                        size: 14,
+                        color: index < stars ? Colors.orange : Colors.grey))),
+            Text(price,
+                style: const TextStyle(
+                    color: Colors.blue, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.phone, color: Colors.blue),
+              onPressed: () => _makeCall(phone),
+            ),
+            const SizedBox(width: 5),
             IconButton(
               icon: const Icon(Icons.message, color: Colors.blue),
               onPressed: () => _openWhatsApp(phone, displayPartName),

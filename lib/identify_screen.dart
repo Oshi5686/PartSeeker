@@ -297,7 +297,7 @@ class IdentifyPage extends StatelessWidget {
 }
 */
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'auth/login_page.dart'; // 🎯 ලොගින් පේජ් එක නිවැරදිව ඉම්පෝර්ට් කරගත්තා
 
 class IdentifyPage extends StatelessWidget {
@@ -431,6 +431,159 @@ class IdentifyPage extends StatelessWidget {
                 child: Text(
                   "Scan Again",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+*/
+
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'auth/login_page.dart';
+
+class IdentifyPage extends StatelessWidget {
+  final String scannedPart;
+  final Uint8List? imageBytes; // ✅ Actual scan image receive කරන්න
+
+  const IdentifyPage({
+    super.key,
+    required this.scannedPart,
+    this.imageBytes, // ✅ optional — නැත්නම් logo show කරනවා
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          "Identified Part",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 🖼️ ✅ Actual scan කළ image show කරනවා
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey[100],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: imageBytes != null
+                      ? Image.memory(
+                          imageBytes!, // ✅ User scan කළ actual image
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.image_not_supported,
+                                  size: 100, color: Colors.grey),
+                        )
+                      : Image.asset(
+                          'assets/images/logo.png', // fallback
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.image_not_supported,
+                                  size: 100, color: Colors.grey),
+                        ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // 🏷️ AI Result Card
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF2F4F4),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    "AI RESULT",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    scannedPart,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1B4F72),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // 🔍 Find Sellers Button
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(scannedPart: scannedPart),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1B4F72),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              child: const Text(
+                "Find Sellers",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            // 🔄 Scan Again Button
+            OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Color(0xFF1B4F72), width: 2),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              child: const Text(
+                "Scan Again",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1B4F72),
                 ),
               ),
             ),

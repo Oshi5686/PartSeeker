@@ -4194,7 +4194,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
   }
 }*/
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'messages_page.dart';
@@ -4824,6 +4824,725 @@ class _SellerDashboardState extends State<SellerDashboard> {
       ),
     );
   }
+
+  Widget _statCard(String title, String value, Color borderColor) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: borderColor.withOpacity(0.5)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            const SizedBox(height: 8),
+            Text(value,
+                style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _sectionCard({
+    required String title,
+    String? subtitle,
+    String? action,
+    required Widget child,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8)
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
+              if (action != null)
+                Text(action,
+                    style: const TextStyle(color: primaryBlue, fontSize: 13)),
+            ],
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 4),
+            Text(subtitle,
+                style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+          ],
+          const SizedBox(height: 14),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _listingHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children:
+            ['Part Name', 'Category', 'Price', 'Status', 'Action'].map((h) {
+          return Expanded(
+            child: Text(h,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[500])),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _listingRow(
+      String name, String cat, String price, String status, Color statusColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+              child: Row(children: [
+            Container(
+                width: 30,
+                height: 30,
+                color: Colors.grey[200],
+                child: const Icon(Icons.image, size: 16, color: Colors.grey)),
+            const SizedBox(width: 8),
+            Expanded(child: Text(name, style: const TextStyle(fontSize: 13))),
+          ])),
+          Expanded(
+              child: Text(cat,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]))),
+          Expanded(child: Text(price, style: const TextStyle(fontSize: 13))),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: statusColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(status,
+                  style: TextStyle(
+                      color: statusColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold)),
+            ),
+          ),
+          Expanded(child: Icon(Icons.more_horiz, color: Colors.grey[400])),
+        ],
+      ),
+    );
+  }
+
+  Widget _inquiryCard(
+      String name, String subject, String message, String time) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+              radius: 22,
+              backgroundColor: Colors.grey[300],
+              child: const Icon(Icons.person, color: Colors.white)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(name,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text(time,
+                        style:
+                            TextStyle(fontSize: 11, color: Colors.grey[400])),
+                  ],
+                ),
+                Text(subject,
+                    style: const TextStyle(
+                        color: primaryBlue,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500)),
+                const SizedBox(height: 4),
+                Text(message,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+*/
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'add_listing_page.dart'; // ✅ Add Listing Page
+import 'messages_page.dart'; // ✅ Messages Page
+import 'pickup_requests_page.dart'; // ✅ Pickup Requests Page
+import 'shop_profile_page.dart'; // ✅ Shop Profile Page
+import 'settings_page.dart'; // ✅ Settings Page
+
+class SellerDashboard extends StatefulWidget {
+  final String? sellerId;
+
+  const SellerDashboard({super.key, this.sellerId});
+
+  @override
+  State<SellerDashboard> createState() => _SellerDashboardState();
+}
+
+class _SellerDashboardState extends State<SellerDashboard> {
+  int _selectedIndex = 0;
+
+  String _businessName = 'Loading...';
+  String _businessType = '';
+  bool _isLoadingData = true;
+
+  final List<String> _menuItems = [
+    'Dashboard',
+    'Inventory',
+    'Add Listing',
+    'Messages',
+    'Pickup Requests',
+    'Shop Profile',
+    'Settings',
+  ];
+
+  final List<IconData> _menuIcons = [
+    Icons.dashboard,
+    Icons.inventory_2,
+    Icons.add_circle_outline,
+    Icons.message,
+    Icons.local_shipping,
+    Icons.store,
+    Icons.settings,
+  ];
+
+  static const Color primaryBlue = Color(0xFF0D3178);
+  static const Color lightGrey = Color(0xFFD9D9D9);
+  static const Color cardBorder = Color(0xFF638CE5);
+  static const Color bgColor = Color(0xFFF5F7FA);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSellerData();
+  }
+
+  Future<void> _loadSellerData() async {
+    if (widget.sellerId == null) {
+      setState(() {
+        _businessName = 'Unknown Seller';
+        _businessType = '';
+        _isLoadingData = false;
+      });
+      return;
+    }
+
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('sellers')
+          .doc(widget.sellerId)
+          .get();
+
+      if (doc.exists && mounted) {
+        final data = doc.data() as Map<String, dynamic>;
+        setState(() {
+          _businessName = data['businessName'] ?? 'Unknown';
+          _businessType = data['businessType'] ?? '';
+          _isLoadingData = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _businessName = 'Error Loading';
+          _businessType = '';
+          _isLoadingData = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: bgColor,
+      body: Row(
+        children: [
+          // ===== LEFT SIDEBAR =====
+          Container(
+            width: 220,
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Logo
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.store,
+                                  color: primaryBlue, size: 24);
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'PartSeeker',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: primaryBlue,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                const SizedBox(height: 8),
+
+                // Menu Items
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _menuItems.length,
+                    itemBuilder: (context, index) {
+                      final isSelected = _selectedIndex == index;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedIndex = index),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 12),
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected ? primaryBlue : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _menuIcons[index],
+                                size: 20,
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.grey[600],
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                _menuItems[index],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.grey[800],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                // Logout
+                const Divider(height: 1),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    margin: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    child: Row(
+                      children: [
+                        Icon(Icons.logout, size: 20, color: Colors.grey[600]),
+                        const SizedBox(width: 12),
+                        Text('Logout',
+                            style: TextStyle(
+                                color: Colors.grey[800], fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, bottom: 16),
+                  child: Text('2026 Partseeker Seller',
+                      style: TextStyle(fontSize: 11, color: Colors.grey[400])),
+                ),
+              ],
+            ),
+          ),
+
+          // ===== MAIN CONTENT =====
+          Expanded(
+            child: Column(
+              children: [
+                // TOP NAVBAR
+                Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  child: Row(
+                    children: [
+                      Text(
+                        _menuItems[_selectedIndex],
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: primaryBlue,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Container(
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF0F2F5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Search parts, customer..',
+                              hintStyle: TextStyle(
+                                  color: Colors.grey[400], fontSize: 14),
+                              prefixIcon: Icon(Icons.search,
+                                  color: Colors.grey[400], size: 20),
+                              border: InputBorder.none,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0F2F5),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child:
+                            const Icon(Icons.notifications_outlined, size: 22),
+                      ),
+                      const SizedBox(width: 16),
+                      _isLoadingData
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: primaryBlue),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  _businessName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                Text(
+                                  _businessType,
+                                  style: TextStyle(
+                                      color: Colors.grey[500], fontSize: 12),
+                                ),
+                              ],
+                            ),
+                      const SizedBox(width: 12),
+                      const CircleAvatar(
+                        radius: 20,
+                        backgroundColor: lightGrey,
+                        child: Icon(Icons.person, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // BODY CONTENT
+                Expanded(child: _buildBodyContent()),
+
+                // FOOTER
+                Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('2026 PartSeeker Seller Dashboard',
+                          style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      Row(
+                        children: ['Privacy Policy', 'Term & Condition', 'Help']
+                            .map((t) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(t,
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey)),
+                          );
+                        }).toList(),
+                      ),
+                      const Text('version 1.0.0',
+                          style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ✅ Body content switch — case 2 දැන් AddListingPage() use කරනවා
+  Widget _buildBodyContent() {
+    switch (_selectedIndex) {
+      case 0:
+        return _buildDashboardView();
+      case 1:
+        return _buildInventoryView();
+      case 2:
+        return const AddListingPage(); // ✅ Full Add Listing Page
+      case 3:
+        return const MessagesPage();
+      case 4:
+        return const PickupRequestsPage();
+      case 5:
+        return ShopProfilePage(sellerId: widget.sellerId);
+      case 6:
+        return const SettingsPage();
+      default:
+        return Center(
+          child: Text(
+            '${_menuItems[_selectedIndex]} Page Coming Soon...',
+            style: const TextStyle(fontSize: 18, color: Colors.grey),
+          ),
+        );
+    }
+  }
+
+  // ===== DASHBOARD VIEW =====
+  Widget _buildDashboardView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome back, $_businessName',
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Your shop is performing well today. You have 12 pending inquiries.',
+                    style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                  ),
+                ],
+              ),
+              ElevatedButton.icon(
+                onPressed: () => setState(() => _selectedIndex = 2),
+                icon: const Icon(Icons.add, color: Colors.white),
+                label: const Text('Add New Part',
+                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryBlue,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Stat Cards
+          Row(
+            children: [
+              _statCard('Total Listings', '48', cardBorder),
+              const SizedBox(width: 14),
+              _statCard('Low Stock Items', '7', Colors.orange),
+              const SizedBox(width: 14),
+              _statCard('Out of Stock', '3', Colors.red),
+              const SizedBox(width: 14),
+              _statCard('New Inquiries', '12', Colors.green),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: [
+                    _sectionCard(
+                      title: 'Recent Listings',
+                      subtitle:
+                          'Review and manage your most recent inventory updates.',
+                      action: 'View All →',
+                      child: Column(
+                        children: [
+                          _listingHeader(),
+                          _listingRow(
+                              'Brake Rotor - Front Left',
+                              'Braking System',
+                              'LKR 15,000',
+                              'In Stock',
+                              Colors.green),
+                          _listingRow('Bosch S4 Battery', 'Electrical',
+                              'LKR 25,000', 'Low Stock', Colors.orange),
+                          _listingRow('LED Headlight Assembly', 'Lighting',
+                              'LKR 18,500', 'Out of Stock', Colors.red),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEAF0FB),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: cardBorder.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.lightbulb_outline,
+                              color: primaryBlue, size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Pro Tip: Inventory Management',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13)),
+                                Text(
+                                  'Items listed with clear photos sell 45% faster.',
+                                  style: TextStyle(
+                                      color: Colors.grey[600], fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                flex: 2,
+                child: _sectionCard(
+                  title: 'Customer Inquiries',
+                  action: '2 New',
+                  child: Column(
+                    children: [
+                      _inquiryCard(
+                          'W. M Bandara',
+                          'Re: Brake Rotor',
+                          '"Is this brake rotor available for pickup tomorrow?"',
+                          '12M Ago'),
+                      const SizedBox(height: 12),
+                      _inquiryCard(
+                          'Akash Perera',
+                          'Re: Battery',
+                          '"What is the warranty period for this unit?"',
+                          '3H Ago'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== INVENTORY VIEW =====
+  Widget _buildInventoryView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: _sectionCard(
+        title: 'All Inventory Items',
+        subtitle: 'Manage and update your stock availability and pricing.',
+        child: Column(
+          children: [
+            _listingHeader(),
+            _listingRow('Brake Rotor - Front Left', 'Braking System',
+                'LKR 15,000', 'In Stock', Colors.green),
+            _listingRow('Bosch S4 Battery', 'Electrical', 'LKR 25,000',
+                'Low Stock', Colors.orange),
+            _listingRow('LED Headlight Assembly', 'Lighting', 'LKR 18,500',
+                'Out of Stock', Colors.red),
+            _listingRow('Air Filter - Performance', 'Intake', 'LKR 12,200',
+                'In Stock', Colors.green),
+            _listingRow('Radiator Fan Motor', 'Cooling', 'LKR 11,000',
+                'In Stock', Colors.green),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ===== HELPER WIDGETS =====
 
   Widget _statCard(String title, String value, Color borderColor) {
     return Expanded(

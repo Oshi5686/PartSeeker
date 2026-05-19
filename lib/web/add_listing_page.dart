@@ -1875,7 +1875,7 @@ class PickupRequestsPage extends StatelessWidget {
   }
 }*/
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 
 // =========================================================
 // MAIN DASHBOARD PAGE WITH SIDEBAR NAVIGATION
@@ -2768,6 +2768,645 @@ class PickupRequestsPage extends StatelessWidget {
                   ],
                 )
               : const Text("-", textAlign: TextAlign.center),
+        ),
+      ],
+    );
+  }
+}*/
+
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class AddListingPage extends StatefulWidget {
+  const AddListingPage({super.key});
+
+  @override
+  State<AddListingPage> createState() => _AddListingPageState();
+}
+
+class _AddListingPageState extends State<AddListingPage> {
+  static const Color primaryBlue = Color(0xFF0D3178);
+
+  // 🎯 Firebase Fields - Firestore "parts" collection එකේ fields වලට match
+  final TextEditingController _partNameController =
+      TextEditingController(); // partName
+  final TextEditingController _descriptionController =
+      TextEditingController(); // description
+  final TextEditingController _priceController =
+      TextEditingController(); // price
+  final TextEditingController _stockController =
+      TextEditingController(); // stock
+
+  String? _selectedPartLabel; // category (Part Label)
+  String? _selectedCondition; // condition (Brand New / Reconditioned / Used)
+  String? _selectedBrand; // brand
+  String? _selectedVehicleType; // vehicleType
+  String _status = 'In Stock'; // status - default In Stock
+
+  // compatibility array - Firebase එකේ "compatibility" field
+  final Map<String, bool> _compatibleModels = {
+    'Toyota Corolla': false,
+    'Toyota Vitz': false,
+    'Toyota Axio': false,
+    'Toyota Premio': false,
+    'Honda Fit': false,
+    'Honda Civic': false,
+    'Honda Vezel': false,
+    'Nissan March': false,
+    'Nissan Sunny': false,
+  };
+
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _partNameController.dispose();
+    _descriptionController.dispose();
+    _priceController.dispose();
+    _stockController.dispose();
+    super.dispose();
+  }
+
+  // 🎯 Firebase "parts" collection එකට data save කරන function
+  Future<void> _publishListing() async {
+    // Validation
+    if (_partNameController.text.trim().isEmpty) {
+      _showSnack('Please enter the Part Name!', Colors.red);
+      return;
+    }
+    if (_selectedPartLabel == null) {
+      _showSnack('Please select a Part Label / Category!', Colors.red);
+      return;
+    }
+    if (_priceController.text.trim().isEmpty) {
+      _showSnack('Please enter the Price!', Colors.red);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // ✅ Compatible models list — Firebase "compatibility" array
+      final List<String> compatibility = _compatibleModels.entries
+          .where((e) => e.value)
+          .map((e) => e.key)
+          .toList();
+
+      // ✅ Firebase Firestore "parts" collection එකට save
+      await FirebaseFirestore.instance.collection('parts').add({
+        'partName': _partNameController.text.trim(), // partName field
+        'category': _selectedPartLabel, // category field
+        'brand': _selectedBrand ?? '', // brand field
+        'vehicleType': _selectedVehicleType ?? '', // vehicleType field
+        'condition': _selectedCondition ?? 'Brand New', // condition field
+        'description': _descriptionController.text.trim(), // description field
+        'price': int.tryParse(_priceController.text.trim()) ?? 0, // price field
+        'stock': int.tryParse(_stockController.text.trim()) ?? 0, // stock field
+        'status': _status, // status field
+        'compatibility': compatibility, // compatibility array
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      _showSnack('Listing Published Successfully! ✅', Colors.green);
+      _clearForm();
+    } catch (e) {
+      _showSnack('Error: ${e.toString()}', Colors.red);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _clearForm() {
+    _partNameController.clear();
+    _descriptionController.clear();
+    _priceController.clear();
+    _stockController.clear();
+    setState(() {
+      _selectedPartLabel = null;
+      _selectedCondition = null;
+      _selectedBrand = null;
+      _selectedVehicleType = null;
+      _status = 'In Stock';
+      _compatibleModels.updateAll((key, value) => false);
+    });
+  }
+
+  void _showSnack(String msg, Color color) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: color),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Title ──
+          const Text(
+            'Add Listing',
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Add a new spare part to your inventory',
+            style: TextStyle(color: Colors.grey, fontSize: 14),
+          ),
+          const SizedBox(height: 30),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Left Form ──
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    // Basic Information Card
+                    _buildSectionCard('Basic Information', [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Part Label',
+                              hint: 'Select part type',
+                              value: _selectedPartLabel,
+                              items: [
+                                'AIR COMPRESSOR',
+                                'Brake System',
+                                'Engine Parts',
+                                'Suspension',
+                                'Transmission',
+                                'Electrical Parts',
+                                'Cooling System',
+                                'Lighting',
+                                'Body Parts',
+                              ],
+                              onChanged: (v) =>
+                                  setState(() => _selectedPartLabel = v),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Category',
+                              hint: 'Select category',
+                              value: _selectedCondition,
+                              items: [
+                                'Brand New',
+                                'Reconditioned',
+                                'Used',
+                              ],
+                              onChanged: (v) =>
+                                  setState(() => _selectedCondition = v),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Vehicle Brand + Vehicle Type row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Vehicle Brand',
+                              hint: 'e.g. Toyota, Honda...',
+                              value: _selectedBrand,
+                              items: [
+                                'Toyota',
+                                'Honda',
+                                'Nissan',
+                                'Mitsubishi',
+                                'Suzuki',
+                                'Mazda',
+                                'BMW',
+                                'Mercedes',
+                                'Denso',
+                                'Bosch',
+                              ],
+                              onChanged: (v) =>
+                                  setState(() => _selectedBrand = v),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Vehicle Type',
+                              hint: 'e.g. Sedan, SUV...',
+                              value: _selectedVehicleType,
+                              items: [
+                                'Sedan',
+                                'SUV',
+                                'Hatchback',
+                                'Van',
+                                'Lorry',
+                                'Motorbike',
+                                'Pickup',
+                              ],
+                              onChanged: (v) =>
+                                  setState(() => _selectedVehicleType = v),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Display Name / partName
+                      _buildTextField(
+                        label: 'Display Name (Part Name)',
+                        hint: 'e.g., Premium Ceramic Brake Pads - Front',
+                        controller: _partNameController,
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Description
+                      _buildTextField(
+                        label: 'Description',
+                        hint:
+                            'Describe the part, its features, and condition...',
+                        controller: _descriptionController,
+                        maxLines: 4,
+                      ),
+                    ]),
+
+                    const SizedBox(height: 20),
+
+                    // Compatible Models Card → Firebase "compatibility" array
+                    _buildSectionCard('Compatible Models', [
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 4,
+                        children: _compatibleModels.keys.map((model) {
+                          return SizedBox(
+                            width: 175,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Checkbox(
+                                  value: _compatibleModels[model],
+                                  activeColor: primaryBlue,
+                                  onChanged: (v) => setState(
+                                      () => _compatibleModels[model] = v!),
+                                ),
+                                Flexible(
+                                  child: Text(model,
+                                      style: const TextStyle(fontSize: 13)),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ]),
+
+                    const SizedBox(height: 20),
+
+                    // Pricing & Stock Card → Firebase "price", "stock", "status"
+                    _buildSectionCard('Pricing & Stock', [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildTextField(
+                              label: 'Price (LKR)',
+                              hint: '0',
+                              controller: _priceController,
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _buildTextField(
+                              label: 'Stock Quantity',
+                              hint: '0',
+                              controller: _stockController,
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Status selector → Firebase "status" field
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Status',
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              'In Stock',
+                              'Low Stock',
+                              'Out of Stock',
+                            ].map((s) {
+                              final isSelected = _status == s;
+                              Color chipColor = Colors.green;
+                              if (s == 'Low Stock') chipColor = Colors.orange;
+                              if (s == 'Out of Stock') chipColor = Colors.red;
+
+                              return GestureDetector(
+                                onTap: () => setState(() => _status = s),
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? chipColor.withOpacity(0.15)
+                                        : Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? chipColor
+                                          : Colors.grey.shade300,
+                                      width: isSelected ? 2 : 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    s,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? chipColor
+                                          : Colors.grey[600],
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 30),
+
+              // ── Right Panel ──
+              Expanded(
+                child: Column(
+                  children: [
+                    // Part Image Upload Card
+                    _buildSectionCard('Part Image', [
+                      InkWell(
+                        onTap: () {
+                          _showSnack(
+                              'Image picker — integrate image_picker package here!',
+                              Colors.blue);
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          height: 220,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.shade50,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_photo_alternate_outlined,
+                                  size: 50, color: Colors.grey.shade400),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'Upload Image',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'PNG, JPG up to 5MB',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.grey.shade500),
+                              ),
+                              const SizedBox(height: 12),
+                              OutlinedButton.icon(
+                                onPressed: () {},
+                                icon: const Icon(Icons.file_upload_outlined,
+                                    size: 18),
+                                label: const Text('Choose File'),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: primaryBlue,
+                                  side: const BorderSide(color: primaryBlue),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+
+                    const SizedBox(height: 20),
+
+                    // ── Action Buttons ──
+
+                    // Publish Listing → Firebase save
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryBlue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          elevation: 2,
+                        ),
+                        onPressed: _isLoading ? null : _publishListing,
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white, strokeWidth: 2),
+                              )
+                            : const Text(
+                                'Publish Listing',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Save Draft
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey.shade200,
+                          foregroundColor: Colors.black87,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                        ),
+                        onPressed: () =>
+                            _showSnack('Draft Saved!', Colors.orange),
+                        child: const Text(
+                          'Save',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Cancel
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey.shade300,
+                          foregroundColor: Colors.black87,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                        ),
+                        onPressed: () {
+                          _clearForm();
+                          _showSnack('Form Reset!', Colors.grey);
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Helper Widgets ──
+
+  Widget _buildSectionCard(String title, List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 16, color: primaryBlue),
+          ),
+          const SizedBox(height: 20),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade300)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade300)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: primaryBlue, width: 2)),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown({
+    required String label,
+    required String hint,
+    required String? value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: value,
+          hint: Text(hint,
+              style: const TextStyle(color: Colors.black38, fontSize: 13)),
+          items: items
+              .map((item) => DropdownMenuItem(
+                  value: item,
+                  child: Text(item, style: const TextStyle(fontSize: 13))))
+              .toList(),
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade300)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade300)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: primaryBlue, width: 2)),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+          ),
         ),
       ],
     );
