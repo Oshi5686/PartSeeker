@@ -433,7 +433,7 @@ class _SellerAuthPageState extends State<SellerAuthPage> {
 }
 */
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 
 void main() {
   runApp(const PartSeekerApp());
@@ -1042,6 +1042,1787 @@ class _SellerDashboardPageState extends State<SellerDashboardPage> {
           color: Color(0xFF4285F4),
         ),
       ),
+    );
+  }
+}*/
+
+/*import 'package:flutter/material.dart';
+
+// 🎯 ක්ලාස් එකේ නම 'SellerAuthPage' ලෙස නිවැරදි කළා
+class SellerAuthPage extends StatefulWidget {
+  const SellerAuthPage({super.key});
+
+  @override
+  State<SellerAuthPage> createState() => _SellerAuthPageState();
+}
+
+class _SellerAuthPageState extends State<SellerAuthPage> {
+  int _selectedBusinessType = 0; // 0=Garage Owner, 1=Parts Shop, 2=Individual
+
+  final List<String> _businessTypes = [
+    'Garage Owner',
+    'Parts Shop',
+    'Individual'
+  ];
+
+  final TextEditingController _businessNameController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+
+  @override
+  void dispose() {
+    _businessNameController.dispose();
+    _contactController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // ── Header ──────────────────────────────────────────────────────
+            _buildHeader(),
+
+            // ── Main content row ─────────────────────────────────────────
+            _buildMainContent(),
+
+            // ── Footer ───────────────────────────────────────────────────
+            _buildFooter(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Header
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildHeader() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          // Logo icon
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D3178),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.settings, color: Colors.white, size: 28),
+          ),
+          const SizedBox(width: 12),
+          const Text(
+            'PartSeeker',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0D3178),
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Main Content
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildMainContent() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 700;
+
+        if (isWide) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 4, child: _buildLeftPanel()),
+              Expanded(flex: 5, child: _buildRightPanel()),
+            ],
+          );
+        }
+
+        // Narrow / phone layout – stack vertically
+        return Column(
+          children: [
+            _buildLeftPanel(),
+            _buildRightPanel(),
+          ],
+        );
+      },
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Left blue panel
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildLeftPanel() {
+    return Container(
+      color: const Color(0xFF0D3178),
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Fuel Your Parts\nBusiness\nGrowth.',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              height: 1.25,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Connect with thousands of buyers looking\nfor specific automotive components every day.',
+            style: TextStyle(fontSize: 14, color: Colors.white70, height: 1.5),
+          ),
+          const SizedBox(height: 32),
+          _buildFeatureItem(
+            icon: Icons.trending_up,
+            iconColor: Colors.orange,
+            title: 'Scale your reach',
+            desc:
+                'Get your inventory in front of local garages\nand individual DIYers instantly.',
+          ),
+          const SizedBox(height: 20),
+          _buildFeatureItem(
+            icon: Icons.verified_user,
+            iconColor: Colors.redAccent,
+            title: 'Verified Transactions',
+            desc:
+                'Secure payment handling and pickup\nverification for every single sale.',
+          ),
+          const SizedBox(height: 20),
+          _buildFeatureItem(
+            icon: Icons.check_circle,
+            iconColor: Colors.green,
+            title: 'Operations Simplified',
+            desc:
+                'Inventory tracking, customer messaging,\nand logistics all in one dashboard.',
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String desc,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 20,
+          backgroundColor: iconColor.withOpacity(0.15),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                desc,
+                style: const TextStyle(
+                    color: Colors.white70, fontSize: 13, height: 1.4),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Right white panel (registration form)
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildRightPanel() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Title
+          const Text(
+            'Seller Dashboard',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111111),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Manage spare part listings, customer inquiries,\nand shop information.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.black54, height: 1.5),
+          ),
+          const SizedBox(height: 28),
+
+          // Card
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Google button ──────────────────────────────────────
+                OutlinedButton.icon(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    side: BorderSide(color: Colors.grey.shade400),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  icon: _googleIcon(),
+                  label: const Text(
+                    'Continue with Google',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ── Divider ────────────────────────────────────────────
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'Or join as a partner',
+                        style: TextStyle(color: Colors.black54, fontSize: 13),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Business type selector ─────────────────────────────
+                const Text(
+                  'Select Business Type',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D3178),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: List.generate(_businessTypes.length, (i) {
+                      final selected = _selectedBusinessType == i;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () =>
+                              setState(() => _selectedBusinessType = i),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.all(4),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color:
+                                  selected ? Colors.white : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              _businessTypes[i],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: selected
+                                    ? const Color(0xFF0D3178)
+                                    : Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Business / Seller Name ─────────────────────────────
+                const Text(
+                  'Business/ Seller Name',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _businessNameController,
+                  decoration: _inputDecoration('e.g Hill Country Auto Mart'),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ── Contact + Location row ─────────────────────────────
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Contact Number',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _contactController,
+                            keyboardType: TextInputType.phone,
+                            decoration: _inputDecoration('+94 00 000 0000',
+                                prefixIcon: const Icon(Icons.phone_outlined,
+                                    size: 18, color: Colors.black54)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Location',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _locationController,
+                            decoration: _inputDecoration('City, State',
+                                prefixIcon: const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 18,
+                                    color: Colors.black54)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // ── CTA button ─────────────────────────────────────────
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D3178),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: const Text(
+                    'Continue to Dashboard',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // ── Terms note ─────────────────────────────────────────
+                const Text(
+                  'By continuing, you agree to our Terms of Service and Privacy Policy.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, color: Colors.black45),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // ── Sign in row ────────────────────────────────────────────────
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Already have an account? ',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: const Text(
+                  'Sign In',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D3178),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Footer
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildFooter() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Column(
+        children: [
+          Divider(color: Colors.grey.shade300),
+          const SizedBox(height: 12),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 500;
+              final links = Row(
+                mainAxisAlignment: isWide
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.center,
+                children: [
+                  _footerLink('Privacy Policy'),
+                  const SizedBox(width: 24),
+                  _footerLink('Term & Condition'),
+                  const SizedBox(width: 24),
+                  _footerLink('Help'),
+                ],
+              );
+
+              if (isWide) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '2026 Partseeker Seller Dashboard',
+                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                    ),
+                    links,
+                    const Text(
+                      'version 1.0.0',
+                      style: TextStyle(fontSize: 12, color: Colors.black45),
+                    ),
+                  ],
+                );
+              }
+
+              return Column(
+                children: [
+                  const Text(
+                    '2026 Partseeker Seller Dashboard',
+                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 8),
+                  links,
+                  const SizedBox(height: 4),
+                  const Text(
+                    'version 1.0.0',
+                    style: TextStyle(fontSize: 12, color: Colors.black45),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _footerLink(String label) {
+    return GestureDetector(
+      onTap: () {},
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 13,
+          color: Color(0xFF0D3178),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Helpers
+  // ─────────────────────────────────────────────────────────────────────────
+  InputDecoration _inputDecoration(String hint, {Widget? prefixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
+      prefixIcon: prefixIcon,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFF0D3178), width: 2),
+      ),
+      filled: true,
+      fillColor: Colors.grey.shade50,
+    );
+  }
+
+  Widget _googleIcon() {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      alignment: Alignment.center,
+      child: const Text(
+        'G',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF4285F4),
+        ),
+      ),
+    );
+  }
+}*/
+
+/*import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+ // 🎯 Firebase Firestore import කළා
+//import 'web/seller_dashboard.dart'; // 🎯 ඔයාගේ Dashboard Page එක තියෙන File එක මෙතනින් Import කරන්න
+import 'package:partseeker/web/seller_dashboard.dart'; 
+
+class SellerAuthPage extends StatefulWidget {
+  const SellerAuthPage({super.key});
+
+  @override
+  State<SellerAuthPage> createState() => _SellerAuthPageState();
+}
+
+class _SellerAuthPageState extends State<SellerAuthPage> {
+  int _selectedBusinessType = 0; // 0=Garage Owner, 1=Parts Shop, 2=Individual
+  bool _isLoading = false; // 🎯 Loading එකක් පෙන්වන්න Variable එකක්
+
+  final List<String> _businessTypes = [
+    'Garage Owner',
+    'Parts Shop',
+    'Individual'
+  ];
+
+  final TextEditingController _businessNameController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+
+  // 🎯 Firebase එකට Data Save කරලා ඊළඟ Page එකට යන Function එක
+  Future<void> _registerSeller() async {
+    // 1. Validation: Fields හිස්ද කියලා බලනවා
+    if (_businessNameController.text.trim().isEmpty ||
+        _contactController.text.trim().isEmpty ||
+        _locationController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all the fields!'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true; // Button එක Click කරපු ගමන් Loading ස්ටේට් එකට යනවා
+    });
+
+    try {
+      String businessName = _businessNameController.text.trim();
+      String contact = _contactController.text.trim();
+      String location = _locationController.text.trim();
+      String selectedType = _businessTypes[_selectedBusinessType];
+
+      // 2. Firebase Firestore එකේ 'sellers' කියන Collection එකට Data Save කිරීම
+      DocumentReference docRef = await FirebaseFirestore.instance.collection('sellers').add({
+        'businessName': businessName,
+        'businessType': selectedType,
+        'contactNumber': contact,
+        'location': location,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registration Successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // 3. ඊළඟ Dashboard Page එකට Register වුණු නම සහ Document ID එක Pass කරමින් Navigate වීම
+        // ⚠️ සටහන: ඔයාගේ Dashboard Page එකට Navigation එක active කරගන්න පහත කෝඩ් එකේ Comment අයින් කරන්න.
+        if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SellerDashboardPage(
+              sellerId: docRef.id, // 👈 Firebase එකෙන් ලැබුණු Document ID එක මෙතනින් Dashboard එකට පාස් කරනවා
+            ),
+          ),
+        );
+      }
+        
+        print("Successfully registered $businessName with ID: ${docRef.id}");
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false; // වැඩේ ඉවර වුණාම Loading එක නවත්වනවා
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _businessNameController.dispose();
+    _contactController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildHeader(),
+            _buildMainContent(),
+            _buildFooter(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Header (මෙහිදී Image.asset එක මඟින් ඔයාගේ ලෝගෝ එක එකතු කර ඇත)
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildHeader() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          // 🎯 ඔයාගේ Custom Logo එකassets/images/logo.png වලින් ලෝඩ් වෙනවා
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.transparent, // ලෝගෝ එකට පසුබිමක් අවශ්‍ය නම් මෙතනට පාටක් දෙන්න පුළුවන්
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/images/logo.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  // මොකක් හරි හේතුවකින් ඉමේජ් එක ලෝඩ් නොවුණොත් පෙන්වන්න Default Icon එකක්
+                  return const Icon(Icons.settings, color: Color(0xFF0D3178), size: 28);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Text(
+            'PartSeeker',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0D3178),
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 700;
+
+        if (isWide) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 4, child: _buildLeftPanel()),
+              Expanded(flex: 5, child: _buildRightPanel()),
+            ],
+          );
+        }
+
+        return Column(
+          children: [
+            _buildLeftPanel(),
+            _buildRightPanel(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLeftPanel() {
+    return Container(
+      color: const Color(0xFF0D3178),
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Fuel Your Parts\nBusiness\nGrowth.',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              height: 1.25,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Connect with thousands of buyers looking\nfor specific automotive components every day.',
+            style: TextStyle(fontSize: 14, color: Colors.white70, height: 1.5),
+          ),
+          const SizedBox(height: 32),
+          _buildFeatureItem(
+            icon: Icons.trending_up,
+            iconColor: Colors.orange,
+            title: 'Scale your reach',
+            desc: 'Get your inventory in front of local garages\nand individual DIYers instantly.',
+          ),
+          const SizedBox(height: 20),
+          _buildFeatureItem(
+            icon: Icons.verified_user,
+            iconColor: Colors.redAccent,
+            title: 'Verified Transactions',
+            desc: 'Secure payment handling and pickup\nverification for every single sale.',
+          ),
+          const SizedBox(height: 20),
+          _buildFeatureItem(
+            icon: Icons.check_circle,
+            iconColor: Colors.green,
+            title: 'Operations Simplified',
+            desc: 'Inventory tracking, customer messaging,\nand logistics all in one dashboard.',
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String desc,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 20,
+          backgroundColor: iconColor.withOpacity(0.15),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                desc,
+                style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRightPanel() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'Seller Dashboard',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111111),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Manage spare part listings, customer inquiries,\nand shop information.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.black54, height: 1.5),
+          ),
+          const SizedBox(height: 28),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    side: BorderSide(color: Colors.grey.shade400),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  icon: _googleIcon(),
+                  label: const Text(
+                    'Continue with Google',
+                    style: TextStyle(fontSize: 15, color: Colors.black87, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'Or join as a partner',
+                        style: TextStyle(color: Colors.black54, fontSize: 13),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Select Business Type',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D3178),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: List.generate(_businessTypes.length, (i) {
+                      final selected = _selectedBusinessType == i;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedBusinessType = i),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.all(4),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: selected ? Colors.white : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              _businessTypes[i],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: selected ? const Color(0xFF0D3178) : Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Business/ Seller Name',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _businessNameController,
+                  decoration: _inputDecoration('e.g Hill Country Auto Mart'),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Contact Number',
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _contactController,
+                            keyboardType: TextInputType.phone,
+                            decoration: _inputDecoration('+94 00 000 0000',
+                                prefixIcon: const Icon(Icons.phone_outlined, size: 18, color: Colors.black54)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Location',
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _locationController,
+                            decoration: _inputDecoration('City, State',
+                                prefixIcon: const Icon(Icons.location_on_outlined, size: 18, color: Colors.black54)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                
+                // ── CTA Button ──
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _registerSeller,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D3178),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    elevation: 2,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        )
+                      : const Text(
+                          'Continue to Dashboard',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                        ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'By continuing, you agree to our Terms of Service and Privacy Policy.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, color: Colors.black45),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Already have an account? ',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: const Text(
+                  'Sign In',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D3178),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Column(
+        children: [
+          Divider(color: Colors.grey.shade300),
+          const SizedBox(height: 12),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 500;
+              final links = Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _footerLink('Privacy Policy'),
+                  const SizedBox(width: 24),
+                  _footerLink('Term & Condition'),
+                  const SizedBox(width: 24),
+                  _footerLink('Help'),
+                ],
+              );
+
+              if (isWide) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('2026 Partseeker Seller Dashboard', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    links,
+                    const Text('version 1.0.0', style: TextStyle(fontSize: 12, color: Colors.black45)),
+                  ],
+                );
+              }
+
+              return Column(
+                children: [
+                  const Text('2026 Partseeker Seller Dashboard', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                  const SizedBox(height: 8),
+                  links,
+                  const SizedBox(height: 4),
+                  const Text('version 1.0.0', style: TextStyle(fontSize: 12, color: Colors.black45)),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _footerLink(String label) {
+    return GestureDetector(
+      onTap: () {},
+      child: Text(label, style: const TextStyle(fontSize: 13, color: Color(0xFF0D3178), fontWeight: FontWeight.w500)),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint, {Widget? prefixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
+      prefixIcon: prefixIcon,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade300)),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade300)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF0D3178), width: 2)),
+      filled: true,
+      fillColor: Colors.grey.shade50,
+    );
+  }
+
+  Widget _googleIcon() {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade300, width: 1)),
+      alignment: Alignment.center,
+      child: const Text('G', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF4285F4))),
+    );
+  }
+}
+*/
+
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'seller_dashboard.dart'; // ✅ Fix 1: Correct relative import
+
+class SellerAuthPage extends StatefulWidget {
+  const SellerAuthPage({super.key});
+
+  @override
+  State<SellerAuthPage> createState() => _SellerAuthPageState();
+}
+
+class _SellerAuthPageState extends State<SellerAuthPage> {
+  int _selectedBusinessType = 0;
+  bool _isLoading = false;
+
+  final List<String> _businessTypes = [
+    'Garage Owner',
+    'Parts Shop',
+    'Individual'
+  ];
+
+  final TextEditingController _businessNameController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+
+  Future<void> _registerSeller() async {
+    if (_businessNameController.text.trim().isEmpty ||
+        _contactController.text.trim().isEmpty ||
+        _locationController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all the fields!'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String businessName = _businessNameController.text.trim();
+      String contact = _contactController.text.trim();
+      String location = _locationController.text.trim();
+      String selectedType = _businessTypes[_selectedBusinessType];
+
+      DocumentReference docRef =
+          await FirebaseFirestore.instance.collection('sellers').add({
+        'businessName': businessName,
+        'businessType': selectedType,
+        'contactNumber': contact,
+        'location': location,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registration Successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SellerDashboard(
+                sellerId: docRef.id, // ✅ Fix 2: Correct class name + sellerId
+              ),
+            ),
+          );
+        }
+
+        print("Successfully registered $businessName with ID: ${docRef.id}");
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _businessNameController.dispose();
+    _contactController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildHeader(),
+            _buildMainContent(),
+            _buildFooter(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/images/logo.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.settings,
+                      color: Color(0xFF0D3178), size: 28);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Text(
+            'PartSeeker',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0D3178),
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 700;
+
+        if (isWide) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 4, child: _buildLeftPanel()),
+              Expanded(flex: 5, child: _buildRightPanel()),
+            ],
+          );
+        }
+
+        return Column(
+          children: [
+            _buildLeftPanel(),
+            _buildRightPanel(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLeftPanel() {
+    return Container(
+      color: const Color(0xFF0D3178),
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Fuel Your Parts\nBusiness\nGrowth.',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              height: 1.25,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Connect with thousands of buyers looking\nfor specific automotive components every day.',
+            style: TextStyle(fontSize: 14, color: Colors.white70, height: 1.5),
+          ),
+          const SizedBox(height: 32),
+          _buildFeatureItem(
+            icon: Icons.trending_up,
+            iconColor: Colors.orange,
+            title: 'Scale your reach',
+            desc:
+                'Get your inventory in front of local garages\nand individual DIYers instantly.',
+          ),
+          const SizedBox(height: 20),
+          _buildFeatureItem(
+            icon: Icons.verified_user,
+            iconColor: Colors.redAccent,
+            title: 'Verified Transactions',
+            desc:
+                'Secure payment handling and pickup\nverification for every single sale.',
+          ),
+          const SizedBox(height: 20),
+          _buildFeatureItem(
+            icon: Icons.check_circle,
+            iconColor: Colors.green,
+            title: 'Operations Simplified',
+            desc:
+                'Inventory tracking, customer messaging,\nand logistics all in one dashboard.',
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String desc,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 20,
+          backgroundColor: iconColor.withOpacity(0.15),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                desc,
+                style: const TextStyle(
+                    color: Colors.white70, fontSize: 13, height: 1.4),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRightPanel() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'Seller Dashboard',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111111),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Manage spare part listings, customer inquiries,\nand shop information.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.black54, height: 1.5),
+          ),
+          const SizedBox(height: 28),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    side: BorderSide(color: Colors.grey.shade400),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  icon: _googleIcon(),
+                  label: const Text(
+                    'Continue with Google',
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'Or join as a partner',
+                        style: TextStyle(color: Colors.black54, fontSize: 13),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: Colors.grey.shade300)),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Select Business Type',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D3178),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: List.generate(_businessTypes.length, (i) {
+                      final selected = _selectedBusinessType == i;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () =>
+                              setState(() => _selectedBusinessType = i),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.all(4),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color:
+                                  selected ? Colors.white : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              _businessTypes[i],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: selected
+                                    ? const Color(0xFF0D3178)
+                                    : Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Business/ Seller Name',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _businessNameController,
+                  decoration: _inputDecoration('e.g Hill Country Auto Mart'),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Contact Number',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _contactController,
+                            keyboardType: TextInputType.phone,
+                            decoration: _inputDecoration('+94 00 000 0000',
+                                prefixIcon: const Icon(Icons.phone_outlined,
+                                    size: 18, color: Colors.black54)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Location',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _locationController,
+                            decoration: _inputDecoration('City, State',
+                                prefixIcon: const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 18,
+                                    color: Colors.black54)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _registerSeller,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D3178),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    elevation: 2,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 2),
+                        )
+                      : const Text(
+                          'Continue to Dashboard',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w600),
+                        ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'By continuing, you agree to our Terms of Service and Privacy Policy.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, color: Colors.black45),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Already have an account? ',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: const Text(
+                  'Sign In',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D3178),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Column(
+        children: [
+          Divider(color: Colors.grey.shade300),
+          const SizedBox(height: 12),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 500;
+              final links = Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _footerLink('Privacy Policy'),
+                  const SizedBox(width: 24),
+                  _footerLink('Term & Condition'),
+                  const SizedBox(width: 24),
+                  _footerLink('Help'),
+                ],
+              );
+
+              if (isWide) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('2026 Partseeker Seller Dashboard',
+                        style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    links,
+                    const Text('version 1.0.0',
+                        style: TextStyle(fontSize: 12, color: Colors.black45)),
+                  ],
+                );
+              }
+
+              return Column(
+                children: [
+                  const Text('2026 Partseeker Seller Dashboard',
+                      style: TextStyle(fontSize: 12, color: Colors.black54)),
+                  const SizedBox(height: 8),
+                  links,
+                  const SizedBox(height: 4),
+                  const Text('version 1.0.0',
+                      style: TextStyle(fontSize: 12, color: Colors.black45)),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _footerLink(String label) {
+    return GestureDetector(
+      onTap: () {},
+      child: Text(label,
+          style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF0D3178),
+              fontWeight: FontWeight.w500)),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint, {Widget? prefixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
+      prefixIcon: prefixIcon,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey.shade300)),
+      enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey.shade300)),
+      focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF0D3178), width: 2)),
+      filled: true,
+      fillColor: Colors.grey.shade50,
+    );
+  }
+
+  Widget _googleIcon() {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey.shade300, width: 1)),
+      alignment: Alignment.center,
+      child: const Text('G',
+          style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF4285F4))),
     );
   }
 }

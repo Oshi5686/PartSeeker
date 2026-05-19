@@ -1,7 +1,6 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class InventoryPage extends StatelessWidget {
-  // Figma එකේ තියෙන විදියටම Data ටික මෙතන තියෙනවා
   final List<Map<String, dynamic>> inventoryItems = [
     {
       "label": "Brake Pad",
@@ -16,7 +15,7 @@ class InventoryPage extends StatelessWidget {
       "label": "Oil Filter",
       "name": "Genuine Oil Filter - Toyota",
       "category": "Filters",
-      "price": "850",
+      "price": "8,500",
       "stock": "Low: 3",
       "statusColor": Colors.orange,
       "updated": "27 Mar"
@@ -64,11 +63,11 @@ class InventoryPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Section (Figma එකේ උඩ තියෙන කොටස)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Inventory", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            Text("Inventory",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             Row(
               children: [
                 OutlinedButton.icon(
@@ -81,7 +80,9 @@ class InventoryPage extends StatelessWidget {
                   onPressed: () {},
                   icon: Icon(Icons.add),
                   label: Text("Add New Part"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF1A3D7C), foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF1A3D7C),
+                      foregroundColor: Colors.white),
                 ),
               ],
             ),
@@ -104,7 +105,8 @@ class InventoryPage extends StatelessWidget {
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.search),
                     hintText: "Search by part name or label...",
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
               ),
@@ -120,28 +122,53 @@ class InventoryPage extends StatelessWidget {
         // Inventory Table
         Expanded(
           child: Container(
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(12)),
             child: SingleChildScrollView(
               child: DataTable(
                 columns: [
-                  DataColumn(label: Text('Part Label', style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(label: Text('Display Name', style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(label: Text('Category', style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(label: Text('Price (LKR)', style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(label: Text('Stock', style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Part Label',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Display Name',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Category',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Price (LKR)',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Stock',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Actions',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
                 ],
                 rows: inventoryItems.map((item) {
                   return DataRow(cells: [
-                    DataCell(Text(item['label'], style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500))),
+                    DataCell(Text(item['label'],
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.w500))),
                     DataCell(Text(item['name'])),
-                    DataCell(Chip(label: Text(item['category'], style: TextStyle(fontSize: 12)), backgroundColor: Colors.grey.shade100)),
+                    DataCell(Chip(
+                        label: Text(item['category'],
+                            style: TextStyle(fontSize: 12)),
+                        backgroundColor: Colors.grey.shade100)),
                     DataCell(Text(item['price'])),
-                    DataCell(Text(item['stock'], style: TextStyle(color: item['statusColor'], fontWeight: FontWeight.bold))),
+                    DataCell(Text(item['stock'],
+                        style: TextStyle(
+                            color: item['statusColor'],
+                            fontWeight: FontWeight.bold))),
                     DataCell(Row(
                       children: [
-                        IconButton(icon: Icon(Icons.edit, size: 20), onPressed: () {}),
-                        IconButton(icon: Icon(Icons.delete, size: 20, color: Colors.red), onPressed: () {}),
+                        IconButton(
+                            icon: Icon(Icons.edit, size: 20), onPressed: () {}),
+                        IconButton(
+                            icon:
+                                Icon(Icons.delete, size: 20, color: Colors.red),
+                            onPressed: () {}),
                       ],
                     )),
                   ]);
@@ -169,5 +196,4 @@ class InventoryPage extends StatelessWidget {
       ),
     );
   }
-}*/
-
+}

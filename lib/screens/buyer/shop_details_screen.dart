@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'order_success_screen.dart';
 
 class ShopDetailsScreen extends StatelessWidget {
@@ -201,6 +201,426 @@ class ShopDetailsScreen extends StatelessWidget {
               const SizedBox(height: 20),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+*/
+/*import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'order_success_screen.dart';
+
+class ShopDetailsScreen extends StatelessWidget {
+  // පිටතින් ලැබෙන ඩයිනමික් දත්ත සිතියම් (Maps) දෙක
+  final Map<String, dynamic> partData;
+  final Map<String, dynamic> shopData;
+
+  const ShopDetailsScreen({
+    super.key,
+    required this.partData,
+    required this.shopData,
+  });
+
+  // Google Maps ඕපන් කරන ෆන්ක්ෂන් එක
+  Future<void> _openMap() async {
+    final String address = shopData['location'] ?? "Kandy, Sri Lanka";
+    final String googleMapUrl =
+        "https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}";
+    final Uri url = Uri.parse(googleMapUrl);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  // සෙලර්ට කෝල් එකක් ගන්නා ෆන්ක්ෂන් එක (ඩයිනමික් නම්බර්)
+  Future<void> _callSeller() async {
+    final String phone = shopData['phone'] ?? "+94771234567";
+    final Uri callUrl = Uri.parse("tel:$phone");
+    if (await canLaunchUrl(callUrl)) {
+      await launchUrl(callUrl);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Shop Details",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ඩයිනමික් ෂොප් නම
+            Text(
+              shopData['shopName'] ?? "Unknown Shop",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // ඩයිනමික් පාර්ට් එකේ නම
+                Text(
+                  partData['partName'] ?? "Spare Part",
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  // ඩයිනමික් මිල
+                  child: Text(
+                    partData['price'] ?? "LKR 0.00",
+                    style: const TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // ඩයිනමික් කන්ඩිෂන්
+            Text(
+              "Condition: ${partData['condition'] ?? 'New'}  |  Available: In Stock",
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: const DecorationImage(
+                  image: NetworkImage(
+                      'https://images.unsplash.com/photo-1486006920555-c77dce18193b?q=80&w=600&auto=format&fit=cover'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Description",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "High quality ${partData['partName'] ?? 'part'} suitable for your vehicle updates, sourced directly from trusted distributors.",
+              style: const TextStyle(height: 1.5),
+            ),
+            const SizedBox(height: 25),
+            const Text(
+              "Location",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            // ඩයිනමික් ඇඩ්‍රස් එක
+            Text(shopData['location'] ?? "No Address Available",
+                style: const TextStyle(color: Colors.black87)),
+            const SizedBox(height: 15),
+
+            Container(
+              height: 120,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.location_on, color: Colors.red.shade600, size: 40),
+                  const SizedBox(height: 5),
+                  const Text(
+                    "Click below to open in Google Maps",
+                    style: TextStyle(
+                        color: Colors.blueGrey, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _openMap,
+                icon: const Icon(Icons.directions, color: Colors.white),
+                label: const Text("Get Directions",
+                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _callSeller,
+                    icon: const Icon(Icons.call, color: Colors.white),
+                    label: const Text("Call Seller",
+                        style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade700,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const OrderSuccessScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                    label: const Text("Place Order",
+                        style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+*/
+
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'order_success_screen.dart';
+
+class ShopDetailsScreen extends StatelessWidget {
+  final Map<String, dynamic> partData;
+  final Map<String, dynamic> shopData;
+
+  const ShopDetailsScreen({
+    super.key,
+    required this.partData,
+    required this.shopData,
+  });
+
+  Future<void> _openMap() async {
+    final String address = shopData['location'] ?? "Kandy, Sri Lanka";
+
+    final String googleMapUrl =
+        "https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}";
+    final Uri url = Uri.parse(googleMapUrl);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch maps URL");
+    }
+  }
+
+  Future<void> _callSeller() async {
+    final String phone = shopData['phone'] ?? "";
+    if (phone.isEmpty) return;
+
+    final Uri callUrl = Uri.parse("tel:$phone");
+    if (await canLaunchUrl(callUrl)) {
+      await launchUrl(callUrl);
+    } else {
+      debugPrint("Could not launch phone dialer");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Shop Details",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              shopData['shopName'] ?? "Unknown Shop",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  partData['partName'] ?? "Spare Part",
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    partData['price'] ?? "LKR 0.00",
+                    style: const TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "Condition: LKR{partData['condition'] ?? 'New'}  |  Available: In Stock",
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: const DecorationImage(
+                  image: NetworkImage(
+                      'https://images.unsplash.com/photo-1486006920555-c77dce18193b?q=80&w=600&auto=format&fit=cover'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Description",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "High quality ${partData['partName'] ?? 'part'} suitable for your vehicle updates, sourced directly from trusted distributors.",
+              style: const TextStyle(height: 1.5),
+            ),
+            const SizedBox(height: 25),
+            const Text(
+              "Location",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(shopData['location'] ?? "No Address Available",
+                style: const TextStyle(color: Colors.black87)),
+            const SizedBox(height: 15),
+            InkWell(
+              onTap: _openMap,
+              borderRadius: BorderRadius.circular(15),
+              child: Container(
+                height: 120,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on,
+                        color: Colors.red.shade600, size: 40),
+                    const SizedBox(height: 5),
+                    const Text(
+                      "Click below to open in Google Maps",
+                      style: TextStyle(
+                          color: Colors.blueGrey, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _openMap,
+                icon: const Icon(Icons.directions, color: Colors.white),
+                label: const Text("Get Directions",
+                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _callSeller,
+                    icon: const Icon(Icons.call, color: Colors.white),
+                    label: const Text("Call Seller",
+                        style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade700,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const OrderSuccessScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                    label: const Text("Place Order",
+                        style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

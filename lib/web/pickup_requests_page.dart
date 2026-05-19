@@ -17,7 +17,7 @@ class PickupRequestsPage extends StatelessWidget {
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            
+
             // ඉහළින් ඇති Summary Cards
             Row(
               children: [
@@ -27,9 +27,9 @@ class PickupRequestsPage extends StatelessWidget {
                 _buildStatCard("Completed", "1", Colors.green),
               ],
             ),
-            
+
             const SizedBox(height: 30),
-            
+
             // All Reservations Table Container
             Container(
               padding: const EdgeInsets.all(20),
@@ -44,16 +44,21 @@ class PickupRequestsPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("All Reservations", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text("All Reservations",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
                       DropdownButton<String>(
                         value: "All Status",
-                        items: ["All Status", "Pending", "Accepted"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                        items: ["All Status", "Pending", "Accepted"]
+                            .map((e) =>
+                                DropdownMenuItem(value: e, child: Text(e)))
+                            .toList(),
                         onChanged: (v) {},
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Table Header
                   Table(
                     columnWidths: const {
@@ -77,9 +82,12 @@ class PickupRequestsPage extends StatelessWidget {
                         ],
                       ),
                       // Data Rows
-                      _buildDataRow("#RES1", "Premium Ceramic Brake Pads", "2", "Ruwan Kumara", "Pending", true),
-                      _buildDataRow("#RES2", "Genuine Oil Filter - Toyota", "1", "Chaminda Perera", "Pending", true),
-                      _buildDataRow("#RES3", "Gates Timing Belt Kit", "1", "Saman Jayasuriya", "Accepted", false),
+                      _buildDataRow("#RES1", "Premium Ceramic Brake Pads", "2",
+                          "Ruwan Kumara", "Pending", true),
+                      _buildDataRow("#RES2", "Genuine Oil Filter - Toyota", "1",
+                          "Chaminda Perera", "Pending", true),
+                      _buildDataRow("#RES3", "Gates Timing Belt Kit", "1",
+                          "Saman Jayasuriya", "Accepted", false),
                     ],
                   ),
                 ],
@@ -99,9 +107,12 @@ class PickupRequestsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              Text(title,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey)),
               const SizedBox(height: 10),
-              Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+              Text(value,
+                  style: TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold, color: color)),
             ],
           ),
         ),
@@ -112,14 +123,18 @@ class PickupRequestsPage extends StatelessWidget {
   Widget _tableHeader(String text) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+      child: Text(text,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
     );
   }
 
-  TableRow _buildDataRow(String id, String part, String qty, String buyer, String status, bool showButtons) {
+  TableRow _buildDataRow(String id, String part, String qty, String buyer,
+      String status, bool showButtons) {
     return TableRow(
       children: [
-        Padding(padding: const EdgeInsets.all(12.0), child: Text(id, style: const TextStyle(color: Colors.blue))),
+        Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text(id, style: const TextStyle(color: Colors.blue))),
         Padding(padding: const EdgeInsets.all(12.0), child: Text(part)),
         Padding(padding: const EdgeInsets.all(12.0), child: Text(qty)),
         Padding(padding: const EdgeInsets.all(12.0), child: Text(buyer)),
@@ -131,32 +146,43 @@ class PickupRequestsPage extends StatelessWidget {
               color: status == "Pending" ? Colors.orange[50] : Colors.blue[50],
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(status, style: TextStyle(color: status == "Pending" ? Colors.orange : Colors.blue, fontSize: 12)),
+            child: Text(status,
+                style: TextStyle(
+                    color: status == "Pending" ? Colors.orange : Colors.blue,
+                    fontSize: 12)),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: showButtons 
-            ? Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {}, 
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, padding: const EdgeInsets.symmetric(horizontal: 8)),
-                    child: const Text("Accept", style: TextStyle(fontSize: 11, color: Colors.white)),
-                  ),
-                  const SizedBox(width: 4),
-                  ElevatedButton(
-                    onPressed: () {}, 
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, padding: const EdgeInsets.symmetric(horizontal: 8)),
-                    child: const Text("Reject", style: TextStyle(fontSize: 11, color: Colors.white)),
-                  ),
-                ],
-              )
-            : ElevatedButton(
-                onPressed: () {}, 
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                child: const Text("Mark Completed", style: TextStyle(fontSize: 11, color: Colors.white)),
-              ),
+          child: showButtons
+              ? Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: const EdgeInsets.symmetric(horizontal: 8)),
+                      child: const Text("Accept",
+                          style: TextStyle(fontSize: 11, color: Colors.white)),
+                    ),
+                    const SizedBox(width: 4),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(horizontal: 8)),
+                      child: const Text("Reject",
+                          style: TextStyle(fontSize: 11, color: Colors.white)),
+                    ),
+                  ],
+                )
+              : ElevatedButton(
+                  onPressed: () {},
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text("Mark Completed",
+                      style: TextStyle(fontSize: 11, color: Colors.white)),
+                ),
         ),
       ],
     );

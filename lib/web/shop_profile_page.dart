@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ShopProfilePage extends StatelessWidget {
-  const ShopProfilePage({super.key});
+  const ShopProfilePage({super.key, String? sellerId});
 
   @override
   Widget build(BuildContext context) {

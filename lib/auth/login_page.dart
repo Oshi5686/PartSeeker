@@ -713,7 +713,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 }*/
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'signup_page.dart';
 
 import '../services/auth_service.dart';
@@ -960,6 +960,290 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         await _authService.signInWithGoogle();
         // Google login එකෙන් පසුවත් Home එකට යාමට අවශ්‍ය නම් මෙතනට Navigation එකක් දාන්න
+      },
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 55),
+        side: const BorderSide(color: Colors.grey),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.g_mobiledata, size: 30, color: Colors.blue),
+          const SizedBox(width: 10),
+          const Text("Continue with Google",
+              style: TextStyle(color: Colors.black, fontSize: 16)),
+        ],
+      ),
+    );
+  }
+}*/
+
+import 'package:flutter/material.dart';
+import 'signup_page.dart';
+import '../services/auth_service.dart';
+import '../screens/buyer/buyer_home_screen.dart';
+
+class LoginPage extends StatefulWidget {
+  // 🎯 IdentifyPage එකෙන් එවන ස්කෑන්ඩ් පාර්ට් එකේ නම භාරගන්න variable එකක් එකතු කළා.
+  // ලොගින් නොවී කෙලින්ම ඇප් එකට එන වෙලාවල් සඳහා මේක null (String?) වෙන්න පුළුවන්.
+  final String? scannedPart;
+
+  const LoginPage({super.key, this.scannedPart});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _isObscured = true;
+  final AuthService _authService = AuthService();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          // Background UI Circle
+          Positioned(
+            top: -100,
+            left: MediaQuery.of(context).size.width / 2 - 175,
+            child: Container(
+              width: 350,
+              height: 350,
+              decoration: const BoxDecoration(
+                color: Color(0xFFD6EAF8),
+                shape: BoxShape.circle,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 50),
+                  // Logo එක assets වල තියෙනවා නම් පෙන්වයි
+                  Image.asset('assets/images/logo.png',
+                      height: 80,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                          Icons.settings,
+                          size: 80,
+                          color: Color(0xFF1B4F72))),
+                  const Text(
+                    "PartSeeker",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1B4F72),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Login Form Section
+          Center(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 250),
+
+                  // Log In / Sign Up Toggle
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: _buildToggleSwitch(context),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Login Card
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 25),
+                    padding: const EdgeInsets.all(25),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 15,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        _buildTextField("Email or Username"),
+                        _buildPasswordField("Password"),
+
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              // Forgot Password logic
+                            },
+                            child: const Text("Forgot Password?",
+                                style: TextStyle(color: Colors.blue)),
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        // --- LOG IN BUTTON ---
+                        ElevatedButton(
+                          onPressed: () {
+                            // 🚀 ඩයිනමික් ෂොප් ලිස්ට් එක වැඩ කරන්න, මෙතනින් BuyerHomeScreen එකට
+                            // scannedPart එක පාස් කරනවා. AI එකෙන් මුකුත්ම ආවේ නැත්නම් default 'Brake Rotor' යනවා.
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BuyerHomeScreen(
+                                  scannedPart:
+                                      widget.scannedPart ?? "Brake Rotor",
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1B4F72),
+                            minimumSize: const Size(double.infinity, 55),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                          ),
+                          child: const Text("Log In",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+
+                        const SizedBox(height: 20),
+                        const Text("OR", style: TextStyle(color: Colors.grey)),
+                        const SizedBox(height: 20),
+
+                        // Google Sign In
+                        _buildGoogleSignInButton(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Login සහ Sign Up අතර මාරු වීමට ටැබ් එක
+  Widget _buildToggleSwitch(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1B4F72),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: const Center(
+                  child: Text("Log In",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold))),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                // Sign Up පිටුවට යනවා
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SignUpPage()));
+              },
+              child: const Center(
+                  child: Text("Sign Up",
+                      style: TextStyle(fontWeight: FontWeight.bold))),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextField(
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[100],
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 15),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField(String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextField(
+          obscureText: _isObscured,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[100],
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isObscured ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isObscured = !_isObscured;
+                });
+              },
+            ),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 15),
+      ],
+    );
+  }
+
+  Widget _buildGoogleSignInButton() {
+    return OutlinedButton(
+      onPressed: () async {
+        await _authService.signInWithGoogle();
+
+        // 🚀 Google Login එක සාර්ථක වුණාට පස්සෙත් Home එකට ඩේටා ටික යන්න මෙතනට Navigation එක දැම්මා
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BuyerHomeScreen(
+                scannedPart: widget.scannedPart ?? "Brake Rotor",
+              ),
+            ),
+          );
+        }
       },
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(double.infinity, 55),
