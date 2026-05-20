@@ -1,191 +1,4 @@
 /*import 'package:flutter/material.dart';
-import 'login_page.dart';
-
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              // Logo & Brand Name
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/images/logo.png', height: 60),
-                  const SizedBox(width: 10),
-                  const Text(
-                    "PartSeeker",
-                    style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1B4F72)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
-
-              // Toggle Tab (Log In | Sign Up)
-              _buildToggleTab(context, false),
-
-              const SizedBox(height: 30),
-
-              // Input Fields
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Column(
-                  children: [
-                    _buildTextField("Full Name"),
-                    _buildTextField("Email Address"),
-                    _buildTextField("Password", isPassword: true),
-                    _buildTextField("Confirm Password", isPassword: true),
-
-                    const SizedBox(height: 25),
-
-                    // Sign Up Button
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1B4F72),
-                        minimumSize: const Size(double.infinity, 55),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                      ),
-                      child: const Text("Sign Up",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
-                    ),
-
-                    const SizedBox(height: 20),
-                    const Text("OR",
-                        style: TextStyle(
-                            color: Colors.grey, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 20),
-
-                    // Google Button
-                    _buildGoogleButton(),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Helper to build Toggle Tab
-  Widget _buildToggleTab(BuildContext context, bool isLoginActive) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 30),
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LoginPage())),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: isLoginActive
-                      ? const Color(0xFF1B4F72)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Center(
-                  child: Text("Log In",
-                      style: TextStyle(
-                          color: isLoginActive ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: !isLoginActive
-                    ? const Color(0xFF1B4F72)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Center(
-                child: Text("Sign Up",
-                    style: TextStyle(
-                        color: !isLoginActive ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextField(String label, {bool isPassword = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        const SizedBox(height: 8),
-        TextField(
-          obscureText: isPassword,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.grey[100],
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          ),
-        ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildGoogleButton() {
-    return OutlinedButton(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 55),
-        side: const BorderSide(color: Colors.grey),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("G",
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red)),
-          const SizedBox(width: 10),
-          const Text("Continue with Google",
-              style: TextStyle(color: Colors.black, fontSize: 16)),
-        ],
-      ),
-    );
-  }
-}*/
-
-/*import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -689,7 +502,6 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   bool _isObscured = true;
 
-  // 🎯 යූසර් ලියන දේවල් අල්ලගන්න Controllers ටික මෙන්න:
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -698,7 +510,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void dispose() {
-    // 💡 Memory leaks නැති කරන්න Controllers ටික dispose කරනවා
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -706,7 +517,6 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  // 🚀 Firebase එකට Register කරන සහ ඊටපස්සේ ලොගින් එකට යවන ප්‍රධාන Function එක
   Future<void> _signUp() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
@@ -727,20 +537,15 @@ class _SignUpPageState extends State<SignUpPage> {
     }
 
     try {
-      // 1. Firebase එකේ Account එකක් සාදනවා
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // 2. Firebase එක ඇතුළේ යූසර්ගේ නම (DisplayName) එක update කරනවා
-      // (මෙන්න මේක කරපු නිසා තමයි හෝම් ස්ක්‍රීන් එකට නම ගන්න පුළුවන් වෙන්නේ!)
       await userCredential.user?.updateDisplayName(name);
 
       _showSnackBar("Registration Successful! Please Log In.");
 
-      // 3. සාර්ථකව සේව් වුණාට පස්සේ ලොගින් පේජ් එකට යූසර්ව හරවා යවනවා
       if (mounted) {
-        Navigator.pop(
-            context); // Toggle එකේ තියෙන විදිහට Pop කරලා පරණ Login එකට යනවා
+        Navigator.pop(context);
       }
     } catch (e) {
       _showSnackBar("Error: ${e.toString()}");
@@ -775,9 +580,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 50),
                   // Image.asset('assets/images/logo.png', height: 80),
                   const Icon(Icons.car_repair,
-                      size: 60,
-                      color: Color(
-                          0xFF1B4F72)), // ලෝගෝ එක නැත්නම් ටෙස්ට් කරන්න අයිකන් එකක් දැම්මා
+                      size: 60, color: Color(0xFF1B4F72)),
                   const Text(
                     "PartSeeker",
                     style: TextStyle(
@@ -831,9 +634,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         const SizedBox(height: 10),
 
-                        // 🎯 Sign Up Button එක දැන් වැඩ!
                         ElevatedButton(
-                          onPressed: _signUp, // 🚀 මෙතනට Function එක ලින්ක් කරා
+                          onPressed: _signUp,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1B4F72),
                             minimumSize: const Size(double.infinity, 55),
@@ -900,7 +702,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // 🎯 Controller එක පාස් කරන්න පුළුවන් වෙන්න වෙනස් කළා
   Widget _buildTextField(String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -908,7 +709,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
-          controller: controller, // 🎯 මෙතනට ලින්ක් කරා
+          controller: controller,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.grey[100],
@@ -922,7 +723,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // 🎯 Controller එක පාස් කරන්න පුළුවන් වෙන්න වෙනස් කළා
   Widget _buildPasswordField(String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -930,7 +730,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
-          controller: controller, // 🎯 මෙතනට ලින්ක් කරා
+          controller: controller,
           obscureText: _isObscured,
           decoration: InputDecoration(
             filled: true,
